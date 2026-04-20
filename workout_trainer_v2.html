@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренировка — Неделя 1</title>
+<style>
+:root {
+  --bg: #F7F7F5;
+  --bg2: #EFEFEC;
+  --bg3: #E5E5E0;
+  --card: #FFFFFF;
+  --border: #E0E0D8;
+  --border2: #D0D0C8;
+  --text: #1A1A18;
+  --text2: #6B6B65;
+  --text3: #9A9A94;
+  --green: #1D9E75;
+  --green-light: #E1F5EE;
+  --green-dark: #0F6E56;
+  --blue: #185FA5;
+  --blue-light: #E6F1FB;
+  --orange: #854F0B;
+  --orange-light: #FAEEDA;
+  --red: #E24B4A;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-pill: 20px;
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+[data-theme="dark"] {
+  --bg: #141414;
+  --bg2: #1E1E1E;
+  --bg3: #272727;
+  --card: #1E1E1E;
+  --border: #2E2E2E;
+  --border2: #3A3A3A;
+  --text: #F0F0EC;
+  --text2: #9A9A94;
+  --text3: #6B6B65;
+  --green-light: #0D3326;
+  --green-dark: #4ECFA3;
+  --blue-light: #0D2040;
+  --orange-light: #2E1A00;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.2s, color 0.2s;
+}
+
+.app {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 16px 14px 80px;
+}
+
+/* ── HEADER ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.header-icon {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--green-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.header-text { flex: 1; min-width: 0; }
+.header-title { font-size: 16px; font-weight: 600; color: var(--text); line-height: 1.2; }
+.header-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.theme-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.theme-btn:hover { background: var(--bg2); }
+
+/* ── WEEK NAV ── */
+.week-nav {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+.week-nav::-webkit-scrollbar { display: none; }
+.week-btn {
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--card);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text2);
+  transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.week-btn.active {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+.week-btn.completed::after {
+  content: ' ✓';
+  color: var(--green);
+}
+.week-btn.active.completed::after {
+  color: var(--green-light);
+}
+
+/* ── STATS ── */
+.stats-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.stat-card {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  box-shadow: var(--shadow);
+}
+.stat-val { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1; }
+.stat-label { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+/* ── PROGRESS ── */
+.progress-wrap { margin-bottom: 14px; }
+.progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.progress-text { font-size: 12px; color: var(--text2); }
+.progress-pct { font-size: 12px; font-weight: 600; color: var(--green); }
+.progress-bar {
+  height: 6px;
+  background: var(--bg3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── ROUND NAV ── */
+.round-nav {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+.round-nav::-webkit-scrollbar { display: none; }
+.round-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--card);
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text2);
+  transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.round-btn.active {
+  background: var(--green-light);
+  border-color: var(--green);
+  color: var(--green-dark);
+  font-weight: 600;
+}
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 14px 0 8px;
+}
+
+/* ── EXERCISE CARD ── */
+.exercise-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  transition: opacity 0.2s, border-color 0.15s;
+}
+.exercise-card.done { opacity: 0.45; }
+
+.ss-row { margin-bottom: 6px; }
+.superset-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--blue);
+  background: var(--blue-light);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  display: inline-block;
+}
+
+.ex-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.ex-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+  flex: 1;
+}
+.check-btn {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  background: transparent;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  color: transparent;
+}
+.check-btn.checked {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+}
+.check-btn:hover:not(.checked) { border-color: var(--green); }
+
+.ex-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.meta-tag {
+  font-size: 12px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── LOG INPUTS ── */
+.log-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+.log-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  flex: 1;
+}
+.log-input-wrap label { font-size: 11px; color: var(--text3); white-space: nowrap; }
+.log-input {
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  width: 100%;
+  outline: none;
+  font-family: var(--font);
+}
+.log-input::placeholder { color: var(--text3); font-weight: 400; }
+
+/* ── TECHNIQUE ── */
+.toggle-tech {
+  font-size: 12px;
+  color: var(--green);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+}
+.technique {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.technique.open { max-height: 800px; }
+.technique-inner {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.technique-inner p { margin-bottom: 4px; }
+
+/* ── REST ROW ── */
+.rest-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--orange-light);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+}
+.rest-row span { font-size: 13px; color: var(--orange); flex: 1; }
+.rest-launch {
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border2);
+  background: var(--card);
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text);
+  transition: background 0.1s;
+}
+.rest-launch:hover { background: var(--bg2); }
+
+/* ── TIMER ── */
+.timer-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.timer-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+.timer-display {
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  margin-bottom: 12px;
+  letter-spacing: -2px;
+  transition: color 0.2s;
+}
+.timer-display.danger { color: var(--red); }
+.timer-presets {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.preset-btn {
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text2);
+  transition: all 0.12s;
+}
+.preset-btn:hover { background: var(--bg3); }
+.timer-btns { display: flex; gap: 8px; justify-content: center; }
+.btn {
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--card);
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text);
+  font-family: var(--font);
+  transition: all 0.12s;
+}
+.btn:hover { background: var(--bg2); }
+.btn.primary { background: var(--green); border-color: var(--green); color: white; }
+.btn.primary:hover { background: var(--green-dark); }
+
+/* ── FINISH SCREEN ── */
+.finish-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.finish-screen.show { display: flex; }
+.finish-card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: var(--shadow-md);
+  animation: popIn 0.35s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.finish-emoji { font-size: 56px; margin-bottom: 12px; }
+.finish-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.finish-sub { font-size: 14px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+.finish-stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.finish-stat {
+  flex: 1;
+  background: var(--bg2);
+  border-radius: var(--radius);
+  padding: 10px;
+}
+.finish-stat-val { font-size: 22px; font-weight: 700; color: var(--green); }
+.finish-stat-label { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.finish-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--green);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background 0.15s;
+}
+.finish-btn:hover { background: var(--green-dark); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-icon">💪</div>
+    <div class="header-text">
+      <div class="header-title" id="headerTitle">Неделя 1 — Техника</div>
+      <div class="header-sub">3 тренировки идентичны</div>
+    </div>
+    <button class="theme-btn" onclick="toggleTheme()" title="Сменить тему" id="themeBtn">🌙</button>
+  </div>
+
+  <!-- WEEK NAV -->
+  <div class="week-nav" id="weekNav"></div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-val" id="statWorkouts">0</div>
+      <div class="stat-label">тренировок</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="statStreak">0</div>
+      <div class="stat-label">дней подряд</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="statExTotal">0</div>
+      <div class="stat-label">упражнений</div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-row">
+      <span class="progress-text">Прогресс тренировки</span>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- ROUND NAV -->
+  <div class="round-nav" id="roundNav"></div>
+
+  <!-- CONTENT -->
+  <div id="roundContent"></div>
+
+  <!-- TIMER -->
+  <div class="timer-section">
+    <div class="timer-label" id="timerLabel">Таймер</div>
+    <div class="timer-display" id="timerDisplay">00:00</div>
+    <div class="timer-presets">
+      <button class="preset-btn" onclick="setTimer(20)">20 сек</button>
+      <button class="preset-btn" onclick="setTimer(40)">40 сек</button>
+      <button class="preset-btn" onclick="setTimer(45)">45 сек</button>
+      <button class="preset-btn" onclick="setTimer(60)">1 мин</button>
+      <button class="preset-btn" onclick="setTimer(120)">2 мин</button>
+      <button class="preset-btn" onclick="setTimer(300)">5 мин</button>
+    </div>
+    <div class="timer-btns">
+      <button class="btn primary" id="timerStartBtn" onclick="toggleTimer()">Старт</button>
+      <button class="btn" onclick="resetTimer()">Сброс</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- FINISH SCREEN -->
+<div class="finish-screen" id="finishScreen">
+  <div class="finish-card">
+    <div class="finish-emoji">🏆</div>
+    <div class="finish-title">Тренировка завершена!</div>
+    <div class="finish-sub" id="finishSub">Отличная работа! Ты выполнил все упражнения.</div>
+    <div class="finish-stats">
+      <div class="finish-stat">
+        <div class="finish-stat-val" id="finishExCount">0</div>
+        <div class="finish-stat-label">упражнений</div>
+      </div>
+      <div class="finish-stat">
+        <div class="finish-stat-val" id="finishDuration">0</div>
+        <div class="finish-stat-label">минут</div>
+      </div>
+      <div class="finish-stat">
+        <div class="finish-stat-val" id="finishTotal">0</div>
+        <div class="finish-stat-label">всего трен.</div>
+      </div>
+    </div>
+    <button class="finish-btn" onclick="closeFinish()">Готово 💪</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+const weeksData = [
+  {
+    title: "Неделя 1 — Техника",
+    sub: "3 тренировки идентичны",
+    rounds: [
+      {
+        title: "Разминка (5 минут)",
+        items: [
+          { ss: null, title: "Разминка — обязательно каждый раз", meta: "5 минут", weight: null, reps: null,
+            tech: ["Лёгкое кардио: прыжки, бег на месте, вращения суставов", "Динамические растяжки: выпады, махи ногами, вращения плечами", "Постепенное повышение пульса"] }
+        ]
+      },
+      {
+        title: "Раунд 1 (12 мин) — 2 круга",
+        items: [
+          { ss: "Суперсет А", title: "Гоблетприсед с гирей + подъём колена", meta: "16 кг • 15 повторений", weight: "16 кг", reps: "15 повт.",
+            tech: ["Встань прямо, ноги чуть шире плеч, носки слегка развёрнуты наружу.", "Возьми гирю за дужку обеими руками и прижми к груди. Локти смотрят вниз.", "Медленно опускайся в присед: таз назад, спина прямая, грудь не складывай.", "Опускайся до параллели бёдер с полом. Колени не выходят за носки.", "В верхней точке подними правое колено к груди, задержись 1 секунду, опусти.", "Следующий присед — поднимай левое колено. Чередуй."] },
+          { ss: "Суперсет А", title: "Подтягивания на турнике", meta: "5–8 раз (не до отказа)", weight: null, reps: "5–8 раз",
+            tech: ["Возьмись за перекладину хватом сверху, руки чуть шире плеч.", "Повисни, ноги согни в коленях и скрести.", "На выдохе подтяни тело вверх, сводя лопатки. Подбородок над перекладиной.", "На вдохе плавно опустись до полного выпрямления рук.", "Если тяжело — негативные подтягивания: запрыгни в верхнюю точку и опускайся медленно."] },
+          { ss: null, title: "Отдых после суперсета А", meta: "45 секунд", isRest: true, restTime: 45, tech: [] },
+          { ss: "Суперсет Б", title: "Жим гантелей стоя поочерёдно с доворотом корпуса", meta: "10–12 кг • 10+10 раз", weight: "10–12 кг", reps: "10+10 раз",
+            tech: ["Встань прямо, гантели на уровне плеч, ладони друг на друга.", "Выжми правую гантель вертикально вверх, слегка доверни корпус вправо.", "В верхней точке рука прямая. Задержись 1 секунду.", "Верни гантель, корпус прямо. Повтори левой рукой."] },
+          { ss: "Суперсет Б", title: "Тяга гантели в наклоне с упором", meta: "12–15 кг • 12 повторений/руку", weight: "12–15 кг", reps: "12 повт./руку",
+            tech: ["Поставь колено и руку на скамью. Корпус почти параллелен полу, спина прямая.", "Подтяни гантель к поясу, веди локоть вдоль корпуса. Сведи лопатку.", "Плавно опусти до полного выпрямления. Сделай 12 раз, смени руку."] },
+          { ss: null, title: "Отдых после суперсета Б", meta: "45 секунд", isRest: true, restTime: 45, tech: [] }
+        ]
+      },
+      {
+        title: "Раунд 2 (12 мин) — 2 круга",
+        items: [
+          { ss: "Суперсет В", title: "Ягодичный мостик с гирей на животе", meta: "16 кг • 20 повторений", weight: "16 кг", reps: "20 повт.",
+            tech: ["Ляг на спину, ноги согнуты, стопы на полу.", "Положи гирю дном на тазовые кости.", "Подними таз — прямая линия от плеч до колен. Сожми ягодицы 1–2 сек.", "Плавно опусти, не касаясь пола до конца подхода."] },
+          { ss: "Суперсет В", title: "Махи гирей двумя руками", meta: "16 кг • 15 раз", weight: "16 кг", reps: "15 раз",
+            tech: ["Ноги чуть шире плеч, носки слегка врозь.", "Слегка согни колени, наклони корпус — таз назад.", "Резким движением таза выпрямись, вытолкни гирю до уровня груди.", "Руки прямые, вся сила от бёдер!"] },
+          { ss: null, title: "Отдых после суперсета В", meta: "40 секунд", isRest: true, restTime: 40, tech: [] },
+          { ss: "Суперсет Г", title: "Отжимания от пола", meta: "12–15 раз", weight: null, reps: "12–15 раз",
+            tech: ["Упор лёжа: ладони чуть шире плеч, тело — прямая линия.", "Опускай грудь к полу, локти 45° к корпусу.", "Мощно выпрями руки. Если тяжело — с колен."] },
+          { ss: "Суперсет Г", title: "Планка + касание плеч + боковая планка", meta: "40 секунд непрерывной работы", weight: null, reps: "40 сек",
+            tech: ["Упор лёжа на прямых руках. Напряги пресс и ягодицы.", "Поочерёдно касайся рукой противоположного плеча. Таз не раскачивай.", "Через 20 сек — боковая планка на правой руке, 5 секунд. Вернись в центр."] },
+          { ss: null, title: "Отдых после суперсета Г", meta: "40 секунд", isRest: true, restTime: 40, tech: [] }
+        ]
+      },
+      {
+        title: "Раунд 3 (12 мин) — Кардио/Кора",
+        items: [
+          { ss: "Интервал", title: "Бёрпи без отжимания", meta: "40 сек работа", reps: "40 сек",
+            tech: ["Присядь, опусти руки на пол. Прыжком выброси ноги назад.", "Сразу прыжком верни ноги к рукам. Встань и выпрыгни вверх."] },
+          { ss: null, title: "Отдых", meta: "20 секунд", isRest: true, restTime: 20, tech: [] },
+          { ss: "Интервал", title: "Велосипед (скручивания)", meta: "40 сек работа", reps: "40 сек",
+            tech: ["Ляг на спину, руки за головой, ноги подняты под 45°.", "Правым локтем к левому колену, выпрямляя правую ногу. Затем наоборот. Темп быстрый."] },
+          { ss: null, title: "Отдых", meta: "20 секунд", isRest: true, restTime: 20, tech: [] }
+        ]
+      },
+      {
+        title: "Блок здоровья (15–17 мин)",
+        items: [
+          { ss: "Здоровье", title: "Упражнения Кегеля", meta: "2 подхода (медленные + быстрые)", reps: "2 подхода",
+            tech: ["Медленные сжатия: сожми ПКМышцу, удерживай 5 сек, расслабь 5 сек — 10 раз.", "Быстрые сжатия: максимально быстро сжимай-расслабляй 15 раз.", "Не напрягай живот и ягодицы, не задерживай дыхание."] },
+          { ss: "Здоровье", title: "Ягодичный мостик с акцентом на тазовое дно", meta: "3 × 20 раз, отдых 30 сек", reps: "3 × 20",
+            tech: ["Ляг на спину, ноги согнуты, стопы на полу.", "На выдохе подними таз, сожми ягодицы и втяни ПКМышцу (как Кегель).", "Задержись 2–3 сек. На вдохе опустись."] },
+          { ss: "Здоровье", title: "Глубокие приседания без веса (с паузой внизу)", meta: "3 × 15 раз, отдых 30 сек", reps: "3 × 15",
+            tech: ["Ноги на ширине плеч, носки чуть наружу.", "Медленно приседай ниже параллели, задержись 2 сек внизу. Вставай без рывков."] },
+          { ss: "Растяжка", title: "Растяжка «Бабочка»", meta: "2 раза по 60 секунд", reps: "2 × 60 сек",
+            tech: ["Сядь на пол, стопы вместе, колени разведены в стороны.", "Надавливай локтями на колени. Спина прямая, тянись макушкой вверх. 60 секунд."] },
+          { ss: "Дыхание", title: "Диафрагмальное дыхание", meta: "5–10 минут", reps: "5–10 мин",
+            tech: ["Ляг на спину, одна рука на груди, другая на животе.", "Вдох носом 4 счёта — живот поднимается, грудь неподвижна.", "Выдох ртом 6–8 счётов — живот опускается. Пресс расслаблен."] }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Неделя 2 — Нагрузка",
+    sub: "Добавляем вес и интенсивность",
+    rounds: [
+      {
+        title: "Разминка (5 минут)",
+        items: [
+          { ss: null, title: "Расширенная разминка", meta: "5 минут",
+            tech: ["Бег на месте с высоким подниманием колен 1 мин", "Прыжки со скакалкой или имитация 1 мин", "Динамические растяжки всего тела"] }
+        ]
+      },
+      {
+        title: "Раунд 1 (14 мин) — 3 круга",
+        items: [
+          { ss: "Суперсет А", title: "Гоблетприсед с гирей + подъём колена", meta: "20 кг • 15 повторений", weight: "20 кг", reps: "15 повт.",
+            tech: ["Техника та же, что на неделе 1. Вес увеличен до 20 кг.", "Контролируй спину и колени на протяжении всего подхода."] },
+          { ss: "Суперсет А", title: "Подтягивания на турнике", meta: "6–10 раз", reps: "6–10 раз",
+            tech: ["Та же техника, стремись к верхней границе диапазона."] },
+          { ss: null, title: "Отдых после суперсета А", meta: "40 секунд", isRest: true, restTime: 40, tech: [] }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Неделя 3 — Интенсив",
+    sub: "Максимальная нагрузка",
+    rounds: [
+      {
+        title: "Разминка (7 минут)",
+        items: [
+          { ss: null, title: "Интенсивная разминка", meta: "7 минут",
+            tech: ["Полный комплекс разминки с упором на суставы и мышцы", "Добавь короткий бег 2–3 мин"] }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Неделя 4 — Пик",
+    sub: "Финальная неделя цикла",
+    rounds: [
+      {
+        title: "Разминка (5 минут)",
+        items: [
+          { ss: null, title: "Стандартная разминка", meta: "5 минут",
+            tech: ["Стандартная разминка неделя 1–3"] }
+        ]
+      }
+    ]
+  }
+];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let currentWeek = 0;
+let currentRound = 0;
+let doneMap = {};     // key: "w-r-e" => bool
+let openTech = {};    // key => bool
+let logData = {};     // key => {weight, reps}
+let timerInterval = null;
+let timerSeconds = 0;
+let timerRunning = false;
+let workoutStartTime = null;
+let workoutStats = { completed: 0, streak: 0, totalEx: 0, lastDate: null, completedWeeks: [] };
+
+/* ═══════════════════════════════════════════
+   STORAGE
+═══════════════════════════════════════════ */
+function saveState() {
+  try {
+    localStorage.setItem('wt_done', JSON.stringify(doneMap));
+    localStorage.setItem('wt_log', JSON.stringify(logData));
+    localStorage.setItem('wt_stats', JSON.stringify(workoutStats));
+    localStorage.setItem('wt_week', String(currentWeek));
+    localStorage.setItem('wt_theme', document.documentElement.getAttribute('data-theme'));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const d = localStorage.getItem('wt_done');
+    if (d) doneMap = JSON.parse(d);
+    const l = localStorage.getItem('wt_log');
+    if (l) logData = JSON.parse(l);
+    const s = localStorage.getItem('wt_stats');
+    if (s) workoutStats = { ...workoutStats, ...JSON.parse(s) };
+    const w = localStorage.getItem('wt_week');
+    if (w !== null) currentWeek = parseInt(w) || 0;
+    const theme = localStorage.getItem('wt_theme');
+    if (theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+  } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════
+   THEME
+═══════════════════════════════════════════ */
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  document.getElementById('themeBtn').textContent = next === 'dark' ? '☀️' : '🌙';
+  saveState();
+}
+
+/* ═══════════════════════════════════════════
+   WEEK NAV
+═══════════════════════════════════════════ */
+function renderWeekNav() {
+  const nav = document.getElementById('weekNav');
+  nav.innerHTML = weeksData.map((w, i) => {
+    const isCompleted = (workoutStats.completedWeeks || []).includes(i);
+    const cls = ['week-btn', i === currentWeek ? 'active' : '', isCompleted ? 'completed' : ''].join(' ').trim();
+    return `<button class="${cls}" onclick="switchWeek(${i})">Нед. ${i+1}</button>`;
+  }).join('');
+}
+
+function switchWeek(idx) {
+  currentWeek = idx;
+  currentRound = 0;
+  workoutStartTime = null;
+  renderAll();
+  saveState();
+}
+
+/* ═══════════════════════════════════════════
+   ROUND NAV
+═══════════════════════════════════════════ */
+function renderRoundNav() {
+  const rounds = weeksData[currentWeek].rounds;
+  const labels = ['Разминка', 'Раунд 1', 'Раунд 2', 'Раунд 3', 'Здоровье'];
+  const nav = document.getElementById('roundNav');
+  nav.innerHTML = rounds.map((r, i) => {
+    const label = labels[i] || `Раунд ${i}`;
+    const cls = 'round-btn' + (i === currentRound ? ' active' : '');
+    return `<button class="${cls}" onclick="switchRound(${i})">${label}</button>`;
+  }).join('');
+}
+
+function switchRound(idx) {
+  currentRound = idx;
+  document.querySelectorAll('.round-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  renderRound();
+}
+
+/* ═══════════════════════════════════════════
+   PROGRESS
+═══════════════════════════════════════════ */
+function getTotalExercises() {
+  let total = 0;
+  weeksData[currentWeek].rounds.forEach((r, ri) => r.items.forEach((ex, ei) => {
+    if (!ex.isRest) total++;
+  }));
+  return total;
+}
+
+function getDoneCount() {
+  let done = 0;
+  const w = currentWeek;
+  weeksData[w].rounds.forEach((r, ri) => r.items.forEach((ex, ei) => {
+    if (!ex.isRest && doneMap[`${w}-${ri}-${ei}`]) done++;
+  }));
+  return done;
+}
+
+function updateProgress() {
+  const total = getTotalExercises();
+  const done = getDoneCount();
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+
+  // Check completion
+  if (total > 0 && done === total) {
+    showFinish(done);
+  }
+}
+
+function updateStats() {
+  document.getElementById('statWorkouts').textContent = workoutStats.completed || 0;
+  document.getElementById('statStreak').textContent = workoutStats.streak || 0;
+  document.getElementById('statExTotal').textContent = workoutStats.totalEx || 0;
+}
+
+/* ═══════════════════════════════════════════
+   RENDER ROUND
+═══════════════════════════════════════════ */
+function renderRound() {
+  const r = weeksData[currentWeek].rounds[currentRound];
+  const container = document.getElementById('roundContent');
+  let html = `<div class="section-title">${r.title}</div>`;
+
+  r.items.forEach((ex, ei) => {
+    const key = `${currentWeek}-${currentRound}-${ei}`;
+
+    if (ex.isRest) {
+      html += `<div class="rest-row">
+        <span>⏱ ${ex.title}: ${ex.meta}</span>
+        <button class="rest-launch" onclick="setTimer(${ex.restTime});startTimer()">Запустить</button>
+      </div>`;
+      return;
+    }
+
+    const isDone = !!doneMap[key];
+    const isOpen = !!openTech[key];
+    const log = logData[key] || {};
+
+    html += `<div class="exercise-card${isDone ? ' done' : ''}" id="card-${key}">`;
+    
+    if (ex.ss) {
+      html += `<div class="ss-row"><span class="superset-label">${ex.ss}</span></div>`;
+    }
+
+    html += `<div class="ex-header">
+      <div class="ex-title">${ex.title}</div>
+      <button class="check-btn${isDone ? ' checked' : ''}" onclick="toggleDone('${key}')" title="Отметить выполнено">
+        ${isDone ? '✓' : ''}
+      </button>
+    </div>`;
+
+    html += `<div class="ex-meta">`;
+    if (ex.weight) html += `<span class="meta-tag">🏋️ ${ex.weight}</span>`;
+    if (ex.reps) html += `<span class="meta-tag">🔁 ${ex.reps}</span>`;
+    html += `</div>`;
+
+    // Log inputs
+    html += `<div class="log-row">`;
+    if (ex.weight !== undefined) {
+      html += `<div class="log-input-wrap">
+        <label>Вес</label>
+        <input class="log-input" type="text" placeholder="${ex.weight || '—'}" value="${log.weight || ''}"
+          oninput="saveLog('${key}', 'weight', this.value)" inputmode="decimal">
+      </div>`;
+    }
+    if (ex.reps !== undefined) {
+      html += `<div class="log-input-wrap">
+        <label>Повт.</label>
+        <input class="log-input" type="text" placeholder="${ex.reps || '—'}" value="${log.reps || ''}"
+          oninput="saveLog('${key}', 'reps', this.value)" inputmode="decimal">
+      </div>`;
+    }
+    html += `</div>`;
+
+    if (ex.tech && ex.tech.length > 0) {
+      html += `<span class="toggle-tech" onclick="toggleTech('${key}')">
+        ${isOpen ? '▲ Скрыть технику' : '▼ Техника выполнения'}
+      </span>
+      <div class="technique${isOpen ? ' open' : ''}">
+        <div class="technique-inner">
+          ${ex.tech.map(t => `<p>• ${t}</p>`).join('')}
+        </div>
+      </div>`;
+    }
+
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+  updateProgress();
+}
+
+/* ═══════════════════════════════════════════
+   ACTIONS
+═══════════════════════════════════════════ */
+function toggleDone(key) {
+  if (!workoutStartTime) workoutStartTime = Date.now();
+  doneMap[key] = !doneMap[key];
+  renderRound();
+  saveState();
+}
+
+function toggleTech(key) {
+  openTech[key] = !openTech[key];
+  renderRound();
+}
+
+function saveLog(key, field, val) {
+  if (!logData[key]) logData[key] = {};
+  logData[key][field] = val;
+  saveState();
+}
+
+/* ═══════════════════════════════════════════
+   FINISH
+═══════════════════════════════════════════ */
+let finishShown = false;
+
+function showFinish(exCount) {
+  if (finishShown) return;
+  finishShown = true;
+
+  const duration = workoutStartTime ? Math.round((Date.now() - workoutStartTime) / 60000) : '~40';
+
+  // Update stats
+  workoutStats.completed = (workoutStats.completed || 0) + 1;
+  workoutStats.totalEx = (workoutStats.totalEx || 0) + exCount;
+
+  // Streak logic
+  const today = new Date().toDateString();
+  if (workoutStats.lastDate) {
+    const last = new Date(workoutStats.lastDate);
+    const diff = Math.round((new Date() - last) / 86400000);
+    workoutStats.streak = diff <= 1 ? (workoutStats.streak || 0) + 1 : 1;
+  } else {
+    workoutStats.streak = 1;
+  }
+  workoutStats.lastDate = today;
+
+  // Mark week complete
+  if (!(workoutStats.completedWeeks || []).includes(currentWeek)) {
+    workoutStats.completedWeeks = [...(workoutStats.completedWeeks || []), currentWeek];
+  }
+
+  saveState();
+  updateStats();
+  renderWeekNav();
+
+  document.getElementById('finishExCount').textContent = exCount;
+  document.getElementById('finishDuration').textContent = duration;
+  document.getElementById('finishTotal').textContent = workoutStats.completed;
+
+  const msgs = ['Ты просто огонь! 🔥', 'Фантастическая работа!', 'Так держать, чемпион!', 'Тело скажет спасибо!'];
+  document.getElementById('finishSub').textContent = msgs[Math.floor(Math.random() * msgs.length)];
+  document.getElementById('finishScreen').classList.add('show');
+}
+
+function closeFinish() {
+  document.getElementById('finishScreen').classList.remove('show');
+}
+
+/* ═══════════════════════════════════════════
+   TIMER
+═══════════════════════════════════════════ */
+function setTimer(secs) {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = secs;
+  document.getElementById('timerStartBtn').textContent = 'Старт';
+  updateTimerDisplay();
+  const labels = { 20: 'Короткий отдых', 40: 'Отдых 40 сек', 45: 'Отдых 45 сек', 60: 'Минута', 120: '2 минуты', 300: 'Растяжка' };
+  document.getElementById('timerLabel').textContent = labels[secs] || `Таймер — ${secs} сек`;
+}
+
+function toggleTimer() {
+  timerRunning ? pauseTimer() : startTimer();
+}
+
+function startTimer() {
+  if (timerRunning) return;
+  if (timerSeconds <= 0) timerSeconds = 45;
+  timerRunning = true;
+  document.getElementById('timerStartBtn').textContent = 'Пауза';
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+    if (timerSeconds <= 0) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      document.getElementById('timerStartBtn').textContent = 'Старт';
+      document.getElementById('timerLabel').textContent = '✅ Готово!';
+      document.getElementById('timerDisplay').textContent = '00:00';
+      document.getElementById('timerDisplay').classList.remove('danger');
+    }
+  }, 1000);
+}
+
+function pauseTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  document.getElementById('timerStartBtn').textContent = 'Продолжить';
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = 0;
+  document.getElementById('timerStartBtn').textContent = 'Старт';
+  document.getElementById('timerLabel').textContent = 'Таймер';
+  document.getElementById('timerDisplay').classList.remove('danger');
+  updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  document.getElementById('timerDisplay').textContent =
+    String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  document.getElementById('timerDisplay').classList.toggle('danger', timerSeconds <= 5 && timerSeconds > 0);
+}
+
+/* ═══════════════════════════════════════════
+   RENDER ALL
+═══════════════════════════════════════════ */
+function renderAll() {
+  finishShown = false;
+  const w = weeksData[currentWeek];
+  document.getElementById('headerTitle').textContent = w.title;
+  renderWeekNav();
+  renderRoundNav();
+  renderRound();
+  updateStats();
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+loadState();
+renderAll();
+</script>
+</body>
+</html>
